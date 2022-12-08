@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useRef, createRef } from 'react';
 import style from "../../styles/top/_Top.module.scss"
-import { getDownloadURL, getStorage, ref } from "firebase/storage"
-import { Link as Scroll } from "react-scroll";
-
 import 'firebase/auth';
 import "../../Firebase"
 import db, { storage } from "../../Firebase";
 import { collection, doc, setDoc, getDocs } from "firebase/firestore";
-import { async } from '@firebase/util';
-import { any } from 'prop-types';
 
 
 // AOS.js
@@ -26,8 +21,6 @@ export const RoomsIntroduction = () => {
     getDocs(postDate).then((snapShot) => {
       SetPosts(snapShot.docs.map((doc) => ({ ...doc.data() })))
     })
-
-
   }
 
   // postの中身がなければ、firebaseからデータを取得
@@ -58,7 +51,7 @@ export const RoomsIntroduction = () => {
                 <div className={style.roomsIntroductionCols} 
                 data-aos="zoom-out-right"
                 data-aos-easing="linear"
-                data-aos-duration="1000"
+                data-aos-duration="1300"
                 data-aos-anchor-placement="bottom-bottom"
                 key={index}
                 >
@@ -75,7 +68,7 @@ export const RoomsIntroduction = () => {
                 <div className={style.roomsIntroductionCols}
                 data-aos="zoom-out-left"
                 data-aos-easing="linear"
-                data-aos-duration="1000"
+                data-aos-duration="1300"
                 data-aos-anchor-placement="bottom-bottom"
                 key={index}
                 >

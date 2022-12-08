@@ -10,11 +10,16 @@ import { getAnalytics } from "firebase/analytics";
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import reginsterReducer from "./store/RegisterSlice"
-import {
-  reservateConfirmContactReducer,
-  reservateConfirmPaymentReducer,
-  reservateConfirmPaymentItemReducer,
-} from "./store/ReservateConfirmSlice";
+import 
+  reservateConfirmReducer
+ from "./store/ReservateConfirmSlice";
+
+import searchReducer from "./store/SearchSlice"
+import gestroomReducer from "./store/GestroomSlice"
+import { HelmetProvider } from 'react-helmet-async';
+
+// redux store
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -39,10 +44,10 @@ const analytics = getAnalytics(app);
 // redux store
 const store = configureStore({
   reducer: {
-    input: reservateConfirmContactReducer,
-    addPayment: reservateConfirmPaymentItemReducer,
-    select: reservateConfirmPaymentReducer,
-    registerInput:reginsterReducer
+    inputValue: reservateConfirmReducer,
+    registerInput:reginsterReducer,
+    searchInput:searchReducer,
+    gestroom:gestroomReducer,
   },
 });
     
@@ -53,9 +58,11 @@ const root = ReactDOM.createRoot(
 // 全てのコンポーネントでstoreを共有
 root.render(
   <React.StrictMode>
+    <HelmetProvider>
     <Provider store={store}>
       <App />
     </Provider>
+    </HelmetProvider>
   </React.StrictMode>
 );
 
