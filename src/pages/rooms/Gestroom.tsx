@@ -52,7 +52,7 @@ const GestroomPlan: React.FC<RoomProps> = () => {
           path={"/books/ReservateHistory"}
           classname={RoomStyle.reservedCheck}
         />
-        {err.map((error: any, index: any) => {
+        {err.map((error: string, index: number) => {
           return (
             <p key={index} className={RoomStyle.err}>
               ※{error}
@@ -72,17 +72,15 @@ const GestroomPlan: React.FC<RoomProps> = () => {
           setReserved={setReserved}
         />
         <p className={RoomStyle.pageTitle2}>全ての客室＆プラン</p>
-        <div className={RoomStyle.roomLinkWrapper}>
-
-        </div>
-        {err.map((error: any) => {
+        <div className={RoomStyle.roomLinkWrapper}></div>
+        {err.map((error: string) => {
           return (
             <p key={err[0]} className={RoomStyle.err}>
               ※{error}
             </p>
           );
         })}
-        {info.map((information: any) => {
+        {info.map((information: string) => {
           return (
             <p key={info[0]} className={RoomStyle.info}>
               ※{information}
@@ -114,10 +112,9 @@ export const RoomCard = (props: any) => {
     ascClick,
     setAscClick,
   } = props;
-  // const descEl = useSelector((state: any) => state.gestroom.descClick);
-  // const ascEl = useSelector((state: any) => state.gestroom.ascClick);
+  const [openAnswer, setOpenAnswer] = useState<any>({ 0: false });
   const soartData = collection(db, "gestRoomType");
-  // const [descRoom, setDescRoom] = useState<any>([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,13 +122,8 @@ export const RoomCard = (props: any) => {
     getDocs(roomDate).then((snapShot) => {
       SetRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
     });
-    // const roomDescDate = query(soartData, orderBy("price", "desc"), limit(3));
-    // getDocs(roomDescDate).then((snapShot) => {
-    //   setDescRoom(snapShot.docs.map((doc) => ({ ...doc.data() })));
-    // });
   }, []);
   const [page, setPage] = useState(false);
-  console.log(page);
   //次のページへ進むボタン
   const handleNextPage = async () => {
     setPage(true);
@@ -185,7 +177,7 @@ export const RoomCard = (props: any) => {
   };
   //前のページに戻るボタン
 
- const handlePrevPage = async () => {
+  const handlePrevPage = async () => {
     if (descClick === true) {
       const priceDesc = query(soartData, orderBy("price", "desc"), limit(3));
       const data = await getDocs(priceDesc);
@@ -211,7 +203,6 @@ export const RoomCard = (props: any) => {
       SetRooms(prevPage);
     }
   };
-  const [openAnswer, setOpenAnswer] = useState<any>({ 0: false });
   const handleOpenAnswer = (index: any) => {
     setOpenAnswer((prevState: any) => ({
       ...prevState,
@@ -271,7 +262,9 @@ export const RoomCard = (props: any) => {
                 <div className={RoomStyle.ResarvedRoomBtn}>
                   <PrimaryButton
                     onClick={() => {
-                      navigate(`/rooms/RoomDetails?room=${room.id}&room=${room.id}`);
+                      navigate(
+                        `/rooms/RoomDetails?room=${room.Id}`
+                      );
                     }}
                   >
                     空室を探す
@@ -295,40 +288,21 @@ export const RoomCard = (props: any) => {
                     </button>
                   )}
                 </div>
-                <div className={RoomStyle.roomplanCards}>
-                  <img
-                    width={200}
-                    src="/gestroomPlan/4.png"
-                    alt="roompicture"
-                  />
-                  <div className={RoomStyle.roomplanContainer}>
-                    <p className={RoomStyle.roomplantext}>{room.plan1}</p>
-                    <div className={RoomStyle.roomplanButton}>
-                      <SecondryButton
-                        onClick={() => {
-                          navigate(`/rooms/PlanDetails?plan1=${room.plan1}&room=${room.id}`);
-                        }}
-                      >
-                        このプランで探す
-                      </SecondryButton>
-                    </div>
-                  </div>
-                </div>
-                {openAnswer[index] ? (
-                  <div>
+                {ascClick === true && descClick === false ? (
+                  <>
                     <div className={RoomStyle.roomplanCards}>
                       <img
                         width={200}
-                        src="/gestroomPlan/フリーWi-Fi.jpg"
+                        src="/gestroomPlan/4.png"
                         alt="roompicture"
                       />
                       <div className={RoomStyle.roomplanContainer}>
-                        <p className={RoomStyle.roomplantext}>{room.plan2}</p>
+                        <p className={RoomStyle.roomplantext}>{room.plan1}</p>
                         <div className={RoomStyle.roomplanButton}>
                           <SecondryButton
                             onClick={() => {
                               navigate(
-                                `/rooms/PlanDetails?plan2=${room.plan2}&room=${room.id}`
+                                `/rooms/PlanDetails?plan1=${room.plan1}&room=${room.Id}`
                               );
                             }}
                           >
@@ -337,64 +311,319 @@ export const RoomCard = (props: any) => {
                         </div>
                       </div>
                     </div>
-                    {room.plan3 ? (
-                      <div className={RoomStyle.roomplanCards}>
-                        <img
-                          width={200}
-                          height={165}
-                          src={room.image}
-                          alt="roompicture"
-                        />
-                        <div className={RoomStyle.roomplanContainer}>
-                          <p className={RoomStyle.roomplantext}>{room.plan3}</p>
-                          <div className={RoomStyle.roomplanButton}>
-                            <SecondryButton
-                              onClick={() => {
-                                navigate(
-                                  `/rooms/PlanDetails?plan3=${room.plan3}&room=${room.id}`
-                                );
-                              }}
-                            >
-                              このプランで探す
-                            </SecondryButton>
+                    {openAnswer[index] ? (
+                      <div>
+                        <div className={RoomStyle.roomplanCards}>
+                          <img
+                            width={200}
+                            src="/gestroomPlan/フリーWi-Fi.jpg"
+                            alt="roompicture"
+                          />
+                          <div className={RoomStyle.roomplanContainer}>
+                            <p className={RoomStyle.roomplantext}>
+                              {room.plan2}
+                            </p>
+                            <div className={RoomStyle.roomplanButton}>
+                              <SecondryButton
+                                onClick={() => {
+                                  navigate(
+                                    `/rooms/PlanDetails?plan2=${room.plan2}&room=${room.Id}`
+                                  );
+                                }}
+                              >
+                                このプランで探す
+                              </SecondryButton>
+                            </div>
                           </div>
                         </div>
+                        {room.plan3 ? (
+                          <div className={RoomStyle.roomplanCards}>
+                            <img
+                              width={200}
+                              height={165}
+                              src={room.image}
+                              alt="roompicture"
+                            />
+                            <div className={RoomStyle.roomplanContainer}>
+                              <p className={RoomStyle.roomplantext}>
+                                {room.plan3}
+                              </p>
+                              <div className={RoomStyle.roomplanButton}>
+                                <SecondryButton
+                                  onClick={() => {
+                                    navigate(
+                                      `/rooms/PlanDetails?plan3=${room.plan3}&room=${room.Id}`
+                                    );
+                                  }}
+                                >
+                                  このプランで探す
+                                </SecondryButton>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        {room.plan4 ? (
+                          <div className={RoomStyle.roomplanCards}>
+                            <img
+                              width={200}
+                              height={200}
+                              src="/gestroomPlan/breakfast-1.jpg"
+                              alt="roompicture"
+                            />
+                            <div className={RoomStyle.roomplanContainer}>
+                              <p className={RoomStyle.roomplantext}>
+                                {room.plan4}
+                              </p>
+                              <div className={RoomStyle.roomplanButton}>
+                                <SecondryButton
+                                  onClick={() => {
+                                    navigate(
+                                      `/rooms/PlanDetails?plan4=${room.plan4}&room=${room.Id}`
+                                    );
+                                  }}
+                                >
+                                  このプランで探す
+                                </SecondryButton>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        <p>
+                          ※表示されている料金は参考価格です。予約内容確認画面で最終的な料金をご確認ください。
+                        </p>
                       </div>
                     ) : (
                       <></>
                     )}
-                    {room.plan4 ? (
-                      <div className={RoomStyle.roomplanCards}>
-                        <img
-                          width={200}
-                          height={200}
-                          src="/gestroomPlan/breakfast-1.jpg"
-                          alt="roompicture"
-                        />
-                        <div className={RoomStyle.roomplanContainer}>
-                          <p className={RoomStyle.roomplantext}>{room.plan4}</p>
-                          <div className={RoomStyle.roomplanButton}>
-                            <SecondryButton
-                              onClick={() => {
-                                navigate(
-                                  `/rooms/PlanDetails?plan4=${room.plan4}&room=${room.id}`
-                                );
-                              }}
-                            >
-                              このプランで探す
-                            </SecondryButton>
+                  </>
+                ) : descClick === true && ascClick === false ? (
+                  <>
+                    <div className={RoomStyle.roomplanCards}>
+                      <img
+                        width={200}
+                        src="/gestroomPlan/4.png"
+                        alt="roompicture"
+                      />
+                      <div className={RoomStyle.roomplanContainer}>
+                        <p className={RoomStyle.roomplantext}>{room.plan1}</p>
+                        <div className={RoomStyle.roomplanButton}>
+                          <SecondryButton
+                            onClick={() => {
+                              navigate(
+                                `/rooms/PlanDetails?plan1=${room.plan1}&ad3r=${room.area}`
+                              );
+                            }}
+                          >
+                            このプランで探す
+                          </SecondryButton>
+                        </div>
+                      </div>
+                    </div>
+                    {openAnswer[index] ? (
+                      <div>
+                        <div className={RoomStyle.roomplanCards}>
+                          <img
+                            width={200}
+                            src="/gestroomPlan/フリーWi-Fi.jpg"
+                            alt="roompicture"
+                          />
+                          <div className={RoomStyle.roomplanContainer}>
+                            <p className={RoomStyle.roomplantext}>
+                              {room.plan2}
+                            </p>
+                            <div className={RoomStyle.roomplanButton}>
+                              <SecondryButton
+                                onClick={() => {
+                                  navigate(
+                                    `/rooms/PlanDetails?plan2=${room.plan2}&ad3r=${room.area}`
+                                  );
+                                }}
+                              >
+                                このプランで探す
+                              </SecondryButton>
+                            </div>
                           </div>
                         </div>
+                        {room.plan3 ? (
+                          <div className={RoomStyle.roomplanCards}>
+                            <img
+                              width={200}
+                              height={165}
+                              src={room.image}
+                              alt="roompicture"
+                            />
+                            <div className={RoomStyle.roomplanContainer}>
+                              <p className={RoomStyle.roomplantext}>
+                                {room.plan3}
+                              </p>
+                              <div className={RoomStyle.roomplanButton}>
+                                <SecondryButton
+                                  onClick={() => {
+                                    navigate(
+                                      `/rooms/PlanDetails?plan3=${room.plan3}&ad3r=${room.area}`
+                                    );
+                                  }}
+                                >
+                                  このプランで探す
+                                </SecondryButton>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        {room.plan4 ? (
+                          <div className={RoomStyle.roomplanCards}>
+                            <img
+                              width={200}
+                              height={200}
+                              src="/gestroomPlan/breakfast-1.jpg"
+                              alt="roompicture"
+                            />
+                            <div className={RoomStyle.roomplanContainer}>
+                              <p className={RoomStyle.roomplantext}>
+                                {room.plan4}
+                              </p>
+                              <div className={RoomStyle.roomplanButton}>
+                                <SecondryButton
+                                  onClick={() => {
+                                    navigate(
+                                      `/rooms/PlanDetails?plan4=${room.plan4}&ad3r=${room.area}`
+                                    );
+                                  }}
+                                >
+                                  このプランで探す
+                                </SecondryButton>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        <p>
+                          ※表示されている料金は参考価格です。予約内容確認画面で最終的な料金をご確認ください。
+                        </p>
                       </div>
                     ) : (
                       <></>
                     )}
-                    <p>
-                      ※表示されている料金は参考価格です。予約内容確認画面で最終的な料金をご確認ください。
-                    </p>
-                  </div>
+                  </>
                 ) : (
-                  <></>
+                  <>
+                    <div className={RoomStyle.roomplanCards}>
+                      <img
+                        width={200}
+                        src="/gestroomPlan/4.png"
+                        alt="roompicture"
+                      />
+                      <div className={RoomStyle.roomplanContainer}>
+                        <p className={RoomStyle.roomplantext}>{room.plan1}</p>
+                        <div className={RoomStyle.roomplanButton}>
+                          <SecondryButton
+                            onClick={() => {
+                              navigate(
+                                `/rooms/PlanDetails?plan1=${room.plan1}`
+                              );
+                            }}
+                          >
+                            このプランで探す
+                          </SecondryButton>
+                        </div>
+                      </div>
+                    </div>
+                    {openAnswer[index] ? (
+                      <div>
+                        <div className={RoomStyle.roomplanCards}>
+                          <img
+                            width={200}
+                            src="/gestroomPlan/フリーWi-Fi.jpg"
+                            alt="roompicture"
+                          />
+                          <div className={RoomStyle.roomplanContainer}>
+                            <p className={RoomStyle.roomplantext}>
+                              {room.plan2}
+                            </p>
+                            <div className={RoomStyle.roomplanButton}>
+                              <SecondryButton
+                                onClick={() => {
+                                  navigate(
+                                    `/rooms/PlanDetails?plan2=${room.plan2}`
+                                  );
+                                }}
+                              >
+                                このプランで探す
+                              </SecondryButton>
+                            </div>
+                          </div>
+                        </div>
+                        {room.plan3 ? (
+                          <div className={RoomStyle.roomplanCards}>
+                            <img
+                              width={200}
+                              height={165}
+                              src={room.image}
+                              alt="roompicture"
+                            />
+                            <div className={RoomStyle.roomplanContainer}>
+                              <p className={RoomStyle.roomplantext}>
+                                {room.plan3}
+                              </p>
+                              <div className={RoomStyle.roomplanButton}>
+                                <SecondryButton
+                                  onClick={() => {
+                                    navigate(
+                                      `/rooms/PlanDetails?plan3=${room.plan3}`
+                                    );
+                                  }}
+                                >
+                                  このプランで探す
+                                </SecondryButton>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        {room.plan4 ? (
+                          <div className={RoomStyle.roomplanCards}>
+                            <img
+                              width={200}
+                              height={200}
+                              src="/gestroomPlan/breakfast-1.jpg"
+                              alt="roompicture"
+                            />
+                            <div className={RoomStyle.roomplanContainer}>
+                              <p className={RoomStyle.roomplantext}>
+                                {room.plan4}
+                              </p>
+                              <div className={RoomStyle.roomplanButton}>
+                                <SecondryButton
+                                  onClick={() => {
+                                    navigate(
+                                      `/rooms/PlanDetails?plan4=${room.plan4}`
+                                    );
+                                  }}
+                                >
+                                  このプランで探す
+                                </SecondryButton>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        <p>
+                          ※表示されている料金は参考価格です。予約内容確認画面で最終的な料金をご確認ください。
+                        </p>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </>
                 )}
               </li>
             );

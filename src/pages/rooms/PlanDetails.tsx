@@ -1,6 +1,5 @@
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect, SetStateAction, useCallback } from "react";
 import {
-  addDoc,
   collection,
   getDocs,
   limit,
@@ -19,8 +18,6 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import Calender from "../../components/Atoms/Calender";
 import Head from "../../components/layout/Head";
 import SecondaryLink from "../../components/Atoms/button/SecondaryLink";
-import RoomPlanSearch from "../../components/Templates/Search";
-import RoomSearchSoart from "../../components/Organisms/rooms/PlanSearchSoart";
 
 const PlanDetails = () => {
   const [num, setNum] = useState(1);
@@ -43,7 +40,7 @@ const PlanDetails = () => {
       list.push(splitCookie[i].split("="));
     }
     // cookieにgestID（hJ2JnzBn）がセットされていな場合、付与する
-    list.map((data, index) => {
+    list.map((data) => {
       if (data[0].includes("hJ2JnzBn")) {
         cookieList.push(data[0]);
       }
@@ -54,30 +51,23 @@ const PlanDetails = () => {
   const RoomData = collection(db, "gestRoomType");
   const PlanData = collection(db, "Plan");
 
+  const roomarea = SearchParams.get("ad3r");
   const roomstype = SearchParams.get("room");
-
   const roomtype = SearchParams.get("plan1");
   const roomtype2 = SearchParams.get("plan2");
   const roomtype3 = SearchParams.get("plan3");
   const roomtype4 = SearchParams.get("plan4");
-
-  const roomMatch = rooms.map((room: any) => {
-    return room.id === roomstype;
-  });
-  console.log(roomMatch);
 
   useEffect(() => {
     getDocs(PlanData).then((SnapShot) => {
       setPlans(SnapShot.docs.map((doc) => ({ ...doc.data() })));
     });
 
-    // orderBy("price","desc"),
-    if (roomMatch === true) {
+    if (roomstype) {
       if (roomtype) {
         const detailRoom = query(
           RoomData,
           limit(1),
-          // orderBy("price","desc"),
           where("plan1", "==", roomtype)
         );
         getDocs(detailRoom).then((snapShot) => {
@@ -87,9 +77,8 @@ const PlanDetails = () => {
         const detailRoom = query(
           RoomData,
           limit(1),
-          // orderBy("price","desc"),
           where("plan2", "==", roomtype2)
-        ); //一つだけ表示
+        );
         getDocs(detailRoom).then((snapShot) => {
           setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
         });
@@ -97,9 +86,8 @@ const PlanDetails = () => {
         const detailRoom = query(
           RoomData,
           limit(1),
-          // orderBy("price","desc"),
           where("plan3", "==", roomtype3)
-        ); //一つだけ表示
+        );
         getDocs(detailRoom).then((snapShot) => {
           setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
         });
@@ -107,19 +95,18 @@ const PlanDetails = () => {
         const detailRoom = query(
           RoomData,
           limit(1),
-          // orderBy("price","desc"),
           where("plan4", "==", roomtype4)
-        ); //一つだけ表示
+        );
         getDocs(detailRoom).then((snapShot) => {
           setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
         });
       }
-    }else{
+    } else if (roomarea) {
       if (roomtype) {
         const detailRoom = query(
           RoomData,
           limit(1),
-          orderBy("price","desc"),
+          orderBy("price", "desc"),
           where("plan1", "==", roomtype)
         );
         getDocs(detailRoom).then((snapShot) => {
@@ -129,9 +116,9 @@ const PlanDetails = () => {
         const detailRoom = query(
           RoomData,
           limit(1),
-          orderBy("price","desc"),
+          orderBy("price", "desc"),
           where("plan2", "==", roomtype2)
-        ); //一つだけ表示
+        );
         getDocs(detailRoom).then((snapShot) => {
           setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
         });
@@ -139,9 +126,9 @@ const PlanDetails = () => {
         const detailRoom = query(
           RoomData,
           limit(1),
-          orderBy("price","desc"),
+          orderBy("price", "desc"),
           where("plan3", "==", roomtype3)
-        ); //一つだけ表示
+        );
         getDocs(detailRoom).then((snapShot) => {
           setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
         });
@@ -149,18 +136,56 @@ const PlanDetails = () => {
         const detailRoom = query(
           RoomData,
           limit(1),
-          orderBy("price","desc"),
+          orderBy("price", "desc"),
           where("plan4", "==", roomtype4)
-        ); //一つだけ表示
+        );
         getDocs(detailRoom).then((snapShot) => {
           setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
         });
       }
+    } else {
+      if (roomtype) {
+        const detailRoom = query(
+          RoomData,
+          limit(1),
 
+          where("plan1", "==", roomtype)
+        );
+        getDocs(detailRoom).then((snapShot) => {
+          setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
+        });
+      } else if (roomtype2) {
+        const detailRoom = query(
+          RoomData,
+          limit(1),
+          where("plan2", "==", roomtype2)
+        );
+        getDocs(detailRoom).then((snapShot) => {
+          setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
+        });
+      } else if (roomtype3) {
+        const detailRoom = query(
+          RoomData,
+          limit(1),
+          where("plan3", "==", roomtype3)
+        );
+        getDocs(detailRoom).then((snapShot) => {
+          setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
+        });
+      } else if (roomtype4) {
+        const detailRoom = query(
+          RoomData,
+          limit(1),
+          where("plan4", "==", roomtype4)
+        );
+        getDocs(detailRoom).then((snapShot) => {
+          setRooms(snapShot.docs.map((doc) => ({ ...doc.data() })));
+        });
+      }
     }
   }, []);
 
-  const obroop = () => {
+  const obroop = useCallback(() => {
     const price = [];
     for (let i = 1; i <= 3; i++) {
       price.push(
@@ -170,16 +195,22 @@ const PlanDetails = () => {
       );
     }
     return price;
-  };
+  }, []);
   const [err, setErr] = useState([]);
-  const errMsg: SetStateAction<never[]> = [];
+  const errMsg: any = [];
 
   const handleResarve = () => {
     setErr([]);
 
+    if (datetext.length <= 0) {
+
+      errMsg.push("チェックインの日付を選択してください")
+
+    } else if (new Date(datetext) <= new Date(new Date().toString())) {
+      errMsg.push("本日以降の日付を選択してください")
+
+    } else {
     if (user) {
-      // console.log(user.email);
-      // const reserveData = collection(db, "reserve");
       const data = {
         adultsNum: Number(adult),
         childrenNum: Number(children),
@@ -189,10 +220,8 @@ const PlanDetails = () => {
         totalDate: Number(num),
         plan: roomtype || roomtype2 || roomtype3 || roomtype4,
         mail: user.email,
-        // gestId:
       };
-      // console.log(datetext);
-      // addDoc(reserveData, data);
+
       navigate("/books/ReservateConfirm", { state: data });
     } else {
       const data = {
@@ -203,10 +232,10 @@ const PlanDetails = () => {
         roomType: String(room),
         totalDate: Number(num),
       };
-      // navigate("/users/login")
       navigation("/users/login", { state: data });
       document.cookie = "next=confirm; path=/;";
     }
+  }
     setErr(errMsg);
   };
 
@@ -266,6 +295,13 @@ const PlanDetails = () => {
                   </div>
                 </div>
                 <div className={RoomDetailStyle.detailplan}>
+                {err.map((error: any, index: number) => {
+                    return (
+                      <p key={index} className={RoomDetailStyle.err} style={{color:"red",textAlign:"center"}}>
+                        ※{error}
+                      </p>
+                    );
+                  })}
                   {roomtype ? (
                     <>
                       <p className={RoomDetailStyle.planName}>プラン名</p>
@@ -297,13 +333,6 @@ const PlanDetails = () => {
                   ) : (
                     <></>
                   )}
-                  {err.map((error: any) => {
-                    return (
-                      <p key={err[1]} className={RoomDetailStyle.err}>
-                        ※{error}
-                      </p>
-                    );
-                  })}
                   <p className={RoomDetailStyle.count}>人数</p>
                   <div className={RoomDetailStyle.detailcount}>
                     <p>大人</p>
@@ -381,11 +410,6 @@ const PlanDetails = () => {
             </div>
           );
         })}
-        {/* {rooms===""?
-        <RoomSearchSoart/>
-        :
-        <></>
-        } */}
       </>
       <Footer />
     </>
